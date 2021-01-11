@@ -1,0 +1,140 @@
+<nav class="shadow bg-light rounded">
+  <ul>
+     <li><a href="#">hi! {{firstName + " " + lastName}}</a>
+        <ul>
+           <li><button class="btn mce-btn-small danger" (click)="logout()" style="float: right;right:25px">Log Out</button>
+           </li>
+        </ul>
+     </li>
+  </ul>
+</nav>
+<!-- <div class="container shadow">
+	<div class="content1 content">
+  
+	</div>
+	<div class="content2 content">
+    <div #elem *ngFor="let m of signalRService.messages">
+      <div #ChatId_{{ChatId}} class="mb-2 mt-2"  [class.my-class]="">
+        <div><strong>Date</strong> {{m.DateTime| date: 'mediumDate' }} {{ m.Time}}  {{m.SenderId}} {{  senderId }}</div>
+        <div><strong>Message</strong> {{m.Text}}
+          <span class="delete-msg popup" (click)="popup4remove(m.ChatId)">
+            <em class="fa fa-trash-alt"> </em>
+            <span class="popuptext" [class.show]="showpopup[m.ChatId]" >
+                <span (click)="deleteOneSide(m.ChatId)">Remove Only From Me</span>
+                <br>
+                <span *ngIf="m.SenderId === senderId" (click)="deleteMessage(m.ChatId)">Remove From Both Side</span>
+            </span>  
+          </span>
+          
+        </div>
+        <hr>
+      </div>
+  </div>
+</div>
+
+</div> -->
+<div class="container clearfix shadow">
+  <div class="people-list" id="people-list">
+    <ul class="list">
+      <li class="clearfix" *ngFor="let opt of users" [value]="opt.userId" (click)="onSelectUser(opt.userId)" [class.selected]="opt.userId == receiverId">
+        <img src="../../../assets/images/user.png" alt="avatar" class="avatar"/>
+        <div class="about">
+          <div class="name">{{opt.firstName + " " + opt.lastName}}</div>
+          <!-- <div class="status">
+            <em class="fa fa-circle online"></em> online
+          </div> -->
+        </div>
+      </li>
+    </ul>
+  </div>
+  
+  <div class="chat">
+   
+    <div #scrollMe class="chat-history">
+      <ul>
+        <li *ngIf="signalRService.messages.length==0">You haven't send or received messages yet</li>
+        <section #elem *ngFor="let m of signalRService.messages"  #ChatId_{{ChatId}} [style.display]="(m.ReceiverId == receiverId || m.SenderId == receiverId) && (m.SenderId == senderId && m.IsDeleteFromReceiver == false || m.SenderId != senderId) ? 'block' : 'none'">
+            <li class="clearfix" *ngIf="m.SenderId !== senderId">
+              <div class="message-data align-right">
+                <span class="message-data-time" > {{ m.Time }} {{ m.DateTime | date: 'mediumDate' }}</span> &nbsp; &nbsp;
+                <span class="message-data-name" >{{ receiverName }} </span> <em class="fa fa-circle me"></em>
+                
+              </div>
+              <div class="message other-message float-right">
+                {{m.Text}}
+                <span class="delete-msg popup" (click)="popup4remove(m.ChatId)">
+                  <em class="fa fa-trash-alt"> </em>
+                  <span class="popuptext" [class.show]="showpopup[m.ChatId]" >
+                      <span (click)="deleteOneSide(m.ChatId)">Remove Only From Me</span>
+                      <br>
+                      <span *ngIf="m.SenderId === senderId" (click)="deleteMessage(m.ChatId)">Remove From Both Side</span>
+                  </span>  
+                </span>
+              </div>
+            </li>
+            
+            <li *ngIf="m.SenderId === senderId">
+              <div class="message-data">
+                <span class="message-data-name"><em class="fa fa-circle online"></em> I</span>
+                <span class="message-data-time"> {{ m.Time }} {{ m.DateTime | date: 'mediumDate' }}</span>
+              </div>
+              <div class="message my-message">
+                {{m.Text}}
+                <span class="delete-msg popup" (click)="popup4remove(m.ChatId)">
+                  <em class="fa fa-trash-alt"> </em>
+                  <span class="popuptext" [class.show]="showpopup[m.ChatId]" >
+                      <span (click)="deleteOneSide(m.ChatId)">Remove Only From Me</span>
+                      <br>
+                      <span *ngIf="m.SenderId === senderId" (click)="deleteMessage(m.ChatId)">Remove From Both Side</span>
+                  </span>  
+                </span>
+              </div>
+            </li>
+        </section>
+        
+      
+        <!-- <li class="clearfix">
+          <div class="message-data align-right">
+            <span class="message-data-time" >10:14 AM, Today</span> &nbsp; &nbsp;
+            <span class="message-data-name" >Olia</span> <em class="fa fa-circle me"></em>
+            
+          </div>
+          <div class="message other-message float-right">
+            Well I am not sure. The rest of the team is not here yet. Maybe in an hour or so? Have you faced any problems at the last phase of the project?
+          </div>
+        </li>
+        
+        <li>
+          <div class="message-data">
+            <span class="message-data-name"><em class="fa fa-circle online"></em> Vincent</span>
+            <span class="message-data-time">10:20 AM, Today</span>
+          </div>
+          <div class="message my-message">
+            Actually everything was fine. I'm very excited to show this to our team.
+          </div>
+        </li> -->
+        
+        <!-- <li>
+          <div class="message-data">
+            <span class="message-data-name"><em class="fa fa-circle online"></em> Vincent</span>
+            <span class="message-data-time">10:31 AM, Today</span>
+          </div>
+          <em class="fa fa-circle online"></em>
+          <em class="fa fa-circle online" style="color: #AED2A6"></em>
+          <em class="fa fa-circle online" style="color:#DAE9DA"></em>
+        </li>
+         -->
+      </ul>
+      
+    </div> <!-- end chat-history -->
+    <div style="clear: both;"></div>
+    <div class="chat-message clearfix" >
+      <input class="text" type="text" lass="mt-3 mb-3 mr-3" [(ngModel)]="text" #chatText style="width: 85%;margin-top:10px;" placeholder="Type your message" (keyup.enter)="onEnter()"/>
+      <button  [disabled]="text.length==0" (click)="sendMessage()">Send</button>
+
+    </div> <!-- end chat-message -->
+    
+  </div> <!-- end chat -->
+  
+</div> 
+  
