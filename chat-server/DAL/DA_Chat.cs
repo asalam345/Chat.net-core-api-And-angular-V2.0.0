@@ -1,124 +1,111 @@
-﻿using System;
+﻿using Models;
+using Models.interfaces;
+using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Models;
+using Microsoft.Extensions.Configuration;
+using System.Data.SqlClient;
+using chat_server.Service;
+using System.Data;
 
 namespace DAL
 {
-	public class DA_Chat
-	{
-        private SignalRChatContext _ctx = null;
-        public async Task<string[]> saveUserChat(tblMessage _model)
+	public class DA_Chat : MySqlCommands, IGenericService<MessageVM>
+    {
+        public DA_Chat() 
         {
-            string[] message = new string[2];
+        }
+        public async Task<Result> Get(MessageVM model)
+		{
+            Result result = DefaultResult("Success");
 
             try
             {
-                using (_ctx = new SignalRChatContext())
+                IEnumerable<MessageVM> messages;
+
+                if (model != null)
                 {
-                    DateTime dt = DateTime.Now;
-                    tblMessage model = new tblMessage()
-                    {
-                        ChatId = _ctx.Message.DefaultIfEmpty().Max(x => x == null ? 0 : x.ChatId) + 1,
-                        SenderId = _model.SenderId,
-                        ReceiverId = _model.ReceiverId,
-                        Message = _model.Message,
-                        Date = dt,
-                        Time = dt.ToShortTimeString()
-                    };
-                    _ctx.UserChat.Add(model);
-                    await _ctx.SaveChangesAsync();
-                    message[0] = model.ChatId.ToString();
-                    message[1] = model.Time;
+                    string query = "SELECT * FROM tblMessage WITH(NOLOCK) WHERE SenderId = "
+                        + model.SenderId + " AND ReceiverId = " + model.ReceiverId + " OR ReceiverId = "
+                         + model.SenderId + " AND SenderId = " + model.ReceiverId;
+                    DataTable dataTable = await GetData(query);
+                    messages = Converter.ConvertDataTable<MessageVM>(dataTable);
+                    result.Data = messages;
                 }
             }
             catch (Exception ex)
             {
-                message[0] = "Error:" + ex.ToString();
+                result.Message = "UnSuccess";
+                result.IsSuccess = false;
+                result.Data = ex.Message;
             }
-            return message;
+
+            return await Task.FromResult<Result>(result);
         }
-        public async Task<string> DeleteOneSide(long chatId)
-        {
-            string message = string.Empty;
+
+		public async Task<Result> Entry(MessageVM model)
+		{
+            Result result = DefaultResult("Successfully!");
+            try
+			{
+                long chatId = await getMaxRow("ChatId", "tblMessage") + 1;
+                DateTime dt = DateTime.Now;
+                string time = dt.ToShortTimeString();
+                string query = @"INSERT INTO tblMessage(ChatId, SenderId,ReceiverId,Message,Date,Time) 
+VALUES(" + chatId + "," + model.SenderId + "," + model.ReceiverId + ",'" + model.Message + "',GetDate(),'" 
++ time + "')";
+                result.IsSuccess = await InsertOrUpdateOrDelete(query);
+                //query = "SELECT LAST(ChatId) FROM tblMessage";
+                string[] message = new string[2];
+                message[0] = chatId.ToString();
+                message[1] = time;
+                result.Data = message;
+            }
+			catch (Exception ex)
+			{
+                result.IsSuccess = false;
+                result.Message = "Error:" + ex.InnerException;
+            }
+            return result;
+		}
+
+		public async Task<Result> Update(MessageVM model)
+		{
+            Result result = DefaultResult("Successfully!");
             try
             {
-                using (_ctx = new SignalRChatContext())
-                {
-                    var uc = _ctx.UserChat.Where(w => w.ChatId == chatId).FirstOrDefault();
-                    if (uc != null)
-                    {
-                        //DateTime dt = DateTime.Now;
-                        //tblMessage model = new tblMessage()
-                        //{
-                        //    //ChatId = uc.ChatId,
-                        //    uc.IsDelete = "o",
-                        //    Date = uc.Date
-                        //};
-                        uc.IsDeleteFromReceiver = true;
-                        _ctx.UserChat.Update(uc);
-                        await _ctx.SaveChangesAsync();
-                        message = "Saved";
-                    }
-                }
-
+                DateTime dt = DateTime.Now;
+                string query = "UPDATE tblMessage SET IsDeleteFromReceiver = 1 WHERE ChatId=" + model.ChatId;
+                result.IsSuccess = await InsertOrUpdateOrDelete(query);
             }
             catch (Exception ex)
             {
-                message = "Error:" + ex.InnerException;
+                result.IsSuccess = false;
+                result.Message = "Error:" + ex.InnerException;
             }
 
-            return message;
+            return result;
         }
-        public Task<bool> delete(long chatId)
-        {
-            return Task.Run(() =>
-            {
-                bool flag = false;
-                tblMessage message = null;
-                try
-                {
-                    using (_ctx = new SignalRChatContext())
-                    {
-                        message = _ctx.UserChat.Where(x => x.ChatId == chatId).FirstOrDefault();
-                        _ctx.UserChat.Remove(message);
-                        _ctx.SaveChanges();
-                    }
-                    flag = true;
-                }
-                catch (Exception ex)
-                {
-                    ex.ToString();
-                    message = null;
-                }
 
-                return flag;
-            });
-        }
-        public Task<List<tblMessage>> getUserChat(SenderAndReceiver model)
-        {
-            return Task.Run(() =>
+		public async Task<Result> Delete(long id)
+		{
+            Result result = DefaultResult("Successfully!");
+            try
             {
-                List<tblMessage> userChat = null;
-                try
-                {
-                    using (_ctx = new SignalRChatContext())
-                    {
-                        userChat = (from x in _ctx.UserChat
-                                    where (x.SenderId == model.SenderId && x.ReceiverId == model.ReceiverId) || (x.ReceiverId == model.SenderId && x.SenderId == model.ReceiverId)
-                                    select x).ToList();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    ex.ToString();
-                    userChat = null;
-                }
+                DateTime dt = DateTime.Now;
+                string query = "Delete FROM tblMessage WHERE ChatId=" + id;
+                result.IsSuccess = await InsertOrUpdateOrDelete(query);
+            }
+            catch (Exception ex)
+            {
+                result.IsSuccess = false;
+                result.Message = "Error:" + ex.InnerException;
+            }
 
-                return userChat;
-            });
+            return result;
         }
-    }
+	}
 }

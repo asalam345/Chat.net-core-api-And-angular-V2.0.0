@@ -15,22 +15,9 @@ namespace DAL
 {
 	public class DA_User : MySqlCommands, IGenericService<UserVM>
 	{
-		private readonly string _connectionString;
-		public DA_User(IConfiguration configuration):base(configuration)
+		public DA_User()
 		{
-			_connectionString = configuration.GetConnectionString("ChatDatabase");
 		}
-		
-		Result DefaultResult(string message)
-		{
-			Result result = new Result();
-			result.Message = message;
-			result.IsSuccess = true;
-			result.Data = null;
-
-			return result;
-		}
-		
 		public async Task<Result> Delete(long id)
 		{
 			Result result = DefaultResult("Success");
@@ -70,8 +57,8 @@ namespace DAL
 						result.IsSuccess = false;
 						return await Task.FromResult<Result>(result);
 					}
-				long userId = await getMaxRow() + 1;				
-					
+					long userId = await getMaxRow("UserId", "tblUser") + 1;				
+
 					string query = "INSERT INTO tblUser(userId, email,firstname,lastName) VALUES(" + userId + ",'" + _model.Email
 					+ "','" + _model.FirstName + "', '" + _model.LastName + "')";
 					await InsertOrUpdateOrDelete(query);
@@ -114,20 +101,7 @@ namespace DAL
 				return null;
 			}
 		}
-		async Task<long> getMaxRow()
-		{
-			try
-			{
-				string query = "SELECT MAX(UserId) FROM tblUser WITH(NOLOCK)";
-				DataTable dataTable = await GetData(query);
-				long userId = dataTable.Rows.Count > 0 ? Convert.ToInt64(dataTable.Rows[0][0]): 0;
-				return userId;
-			}
-			catch (Exception ex)
-			{
-				return 0;
-			}
-		}
+		
 		public async Task<Result> Get(UserVM model)
 		{
 			Result result = DefaultResult("Success");

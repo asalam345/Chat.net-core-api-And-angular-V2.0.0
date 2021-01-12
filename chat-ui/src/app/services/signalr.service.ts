@@ -1,10 +1,11 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
 import { from } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { chatMesage } from '../data/chatMesage';
 import { MessagePackHubProtocol } from '@microsoft/signalr-protocol-msgpack'
+import { Common } from './common/common';
 @Injectable({
   providedIn: 'root'
 })
@@ -26,7 +27,18 @@ export class SignalrService {
     this.startConnection();
     this.addListeners();
   }
+  public sendMessage(message: string, sender:number, receiver:number)
+  {
+    const data = {
+      Message : message,
+      SenderId: sender,
+      ReceiverId : receiver
+    }
+    const body = JSON.stringify(data);
+    const reqHeader = new HttpHeaders({ 'Content-Type': 'application/json', 'No-Auth': 'True' });
+    return this.http.post(Common.baseUrl + 'api/Chat', body, { headers: reqHeader });
 
+  }
   public sendMessageToApi(message: string, sender:number, receiver:number) {
     return this.http.post(this.apiUrl, this.buildChatMessage(message,sender,receiver))
       .pipe(tap(_ => console.log("message sucessfully sent to api controller")));
@@ -36,7 +48,6 @@ export class SignalrService {
     var promise = this.hubConnection.invoke("BroadcastAsync", this.buildChatMessage(message,sender,receiver))
       .then(() => { console.log('message sent successfully to hub'); })
       .catch((err) => console.log('error while sending a message to hub: ' + err));
-
     return from(promise);
   }
 

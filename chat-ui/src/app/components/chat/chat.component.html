@@ -8,31 +8,6 @@
      </li>
   </ul>
 </nav>
-<!-- <div class="container shadow">
-	<div class="content1 content">
-  
-	</div>
-	<div class="content2 content">
-    <div #elem *ngFor="let m of signalRService.messages">
-      <div #ChatId_{{ChatId}} class="mb-2 mt-2"  [class.my-class]="">
-        <div><strong>Date</strong> {{m.DateTime| date: 'mediumDate' }} {{ m.Time}}  {{m.SenderId}} {{  senderId }}</div>
-        <div><strong>Message</strong> {{m.Text}}
-          <span class="delete-msg popup" (click)="popup4remove(m.ChatId)">
-            <em class="fa fa-trash-alt"> </em>
-            <span class="popuptext" [class.show]="showpopup[m.ChatId]" >
-                <span (click)="deleteOneSide(m.ChatId)">Remove Only From Me</span>
-                <br>
-                <span *ngIf="m.SenderId === senderId" (click)="deleteMessage(m.ChatId)">Remove From Both Side</span>
-            </span>  
-          </span>
-          
-        </div>
-        <hr>
-      </div>
-  </div>
-</div>
-
-</div> -->
 <div class="container clearfix shadow">
   <div class="people-list" id="people-list">
     <ul class="list">

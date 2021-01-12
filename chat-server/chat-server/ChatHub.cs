@@ -3,29 +3,30 @@ using DAL;
 using Microsoft.AspNetCore.SignalR;
 using Models;
 using System;
+using Models.interfaces;
+
 namespace chat_server
 {
     public class ChatHub : Hub<IChatHub>
     {
-		private DA_Chat _objAuthtication = null;
-		public async Task BroadcastAsync(ChatMessage chat)
+        private IGenericService<MessageVM> _genericService;
+        public ChatHub(IGenericService<MessageVM> genericService)
+        {
+            _genericService = genericService;
+        }
+        public async Task BroadcastAsync(ChatMessage chat)
         {
 			try
 			{
-                this._objAuthtication = new DA_Chat();
-                tblMessage message = new tblMessage();
-                message.Message = chat.Text;
-                message.ReceiverId = chat.ReceiverId;
-                message.SenderId = chat.SenderId;
-                string[] result = await _objAuthtication.saveUserChat(message);
-                if (result.Length > 1)
-                {
-                    chat.ChatId = Convert.ToInt64(result[0].Trim());
-                    chat.Time = result[1];
-                    await Clients.All.MessageReceivedFromHub(chat);
-                }
+                MessageVM msg = new MessageVM();
+                msg.Message = chat.Text;
+                msg.ReceiverId = chat.ReceiverId;
+                msg.SenderId = chat.SenderId;
+                Result result =  await _genericService.Entry(msg);
+                
+                await Clients.All.MessageReceivedFromHub(chat);
             }
-			catch (Exception)
+			catch (Exception ex)
 			{
 
 			}
@@ -40,7 +41,6 @@ namespace chat_server
     public interface IChatHub
     {
         Task MessageReceivedFromHub(ChatMessage message);
-
         Task NewUserConnected(string message);
     }
 }

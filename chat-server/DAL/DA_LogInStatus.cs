@@ -12,11 +12,13 @@ namespace DAL
 {
 	public class DA_LogInStatus : MySqlCommands, IGenericService<tblLogedinStatus>
     {
-        public DA_LogInStatus(IConfiguration configuration) : base(configuration)
+        //public DA_LogInStatus(IConfiguration configuration) : base(configuration)
+        //{
+        //}
+        public DA_LogInStatus() 
         {
         }
-
-		public Task<Result> Delete(long id)
+        public Task<Result> Delete(long id)
 		{
 			throw new NotImplementedException();
 		}

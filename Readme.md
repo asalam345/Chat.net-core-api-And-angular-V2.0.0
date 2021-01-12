@@ -15,3 +15,7 @@ install visual studio 2019
 install sql server 2012 or higher
 
 
+1. after openning the folder chat-ui you need to install by write command npm i
+2. open the .net core porject that means the api project on vs 2019 and run it by f5 key
+3. localhost:4200 open this url into 2 browsers
+4. login or registration and then chat....

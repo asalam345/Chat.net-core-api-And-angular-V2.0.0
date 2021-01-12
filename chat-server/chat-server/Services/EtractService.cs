@@ -14,6 +14,8 @@ namespace chat_server.Services
         public static void ExtractChatServices(IServiceCollection services)
         {
             services.AddScoped<IGenericService<UserVM>, DA_User>();
+            services.AddScoped<IGenericService<MessageVM>, DA_Chat>();
+            services.AddScoped<IGenericService<tblLogedinStatus>, DA_LogInStatus>();
         }
     }
 }

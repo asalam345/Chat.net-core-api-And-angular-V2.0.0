@@ -45,11 +45,6 @@ namespace chat_server.Controllers
 				ex.ToString();
 			}
 
-			//result = new Result()
-			//{
-			//	Message = resdata.
-			//};
-
 			return result;
 		}
 	}

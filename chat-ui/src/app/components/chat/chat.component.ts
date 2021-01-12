@@ -71,11 +71,8 @@ getMessage():void{
   };
    this.chatService.getMessage(data).subscribe(s =>{
      const user:any = this.users.filter(f => +f.userId == +this.receiverId);
-     console.log(user);
-    console.log(user[0].firstName + user[0].lastName);
     this.receiverName = user[0].firstName + ' ' + user[0].lastName;
-    this.signalRService.messages = s.resdata.map(m =>  {
-      //console.log(m);
+    this.signalRService.messages = s.data.map(m =>  {
       return {
         Text: m.message,
         DateTime: m.date,
@@ -87,30 +84,17 @@ getMessage():void{
       }
     });
     this.allMessages = this.signalRService.messages;
-    console.log(this.allMessages);
   });
 }
 sendMessage(): void {
   if(this.text.length == 0)return;
-  // const data = {
-  //   ReceiverId: this.receiverId,
-  //   Text: this.text,
-  //   SenderId: +localStorage.getItem('id')
-  // };
   this.signalRService.sendMessageToHub(this.text,this.senderId, this.receiverId).subscribe({
-  //  next: _ => { this.chatService.sendMessage(data).subscribe({
-  //     next: _ => {this.text = ''; this.getMessage();},
-  //     error: (err) => console.error(err)
-   
-  //  });
-  // },
   next: _ => {this.text = ''; this.getMessage();},
 error: (err) => console.error(err)
   });
 }
 deleteMessage(id:number){
 this.chatService.delete(id).subscribe(s =>{
-   //this.allMessages = this.allMessages.filter(item => item.ChatId !== id);
    this.signalRService.messages = this.signalRService.messages.filter(item => item.ChatId !== id);
    this.getMessage();
 });
@@ -122,10 +106,7 @@ public deleteOneSide(id:number){
  });
 }
 public showpopup:Array<boolean> = [];
-// @ViewChild('popup')
-// private elRef: ElementRef
 popup4remove(id) {
   this.showpopup[id] = !this.showpopup[id];// ? false : true;
-  //popup.classList.toggle("show");
 }
 }

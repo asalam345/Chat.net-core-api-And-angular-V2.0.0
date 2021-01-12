@@ -9,9 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "chat-server.Entity", "Model
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "chat-server.DAL", "DAL\chat-server.DAL.csproj", "{D47B857E-835F-4D84-B8C4-155B15787356}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repository.SqlServer", "Repository\Repository.SqlServer.csproj", "{EB82FC28-2E21-42CE-BE11-6991E8FE18A3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "chat-server.Service", "chat-server.Service\chat-server.Service.csproj", "{BB517EE5-0E10-4C39-A348-25678B3B639D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "chat-server.Service", "chat-server.Service\chat-server.Service.csproj", "{BB517EE5-0E10-4C39-A348-25678B3B639D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,10 +29,6 @@ Global
 		{D47B857E-835F-4D84-B8C4-155B15787356}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D47B857E-835F-4D84-B8C4-155B15787356}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D47B857E-835F-4D84-B8C4-155B15787356}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EB82FC28-2E21-42CE-BE11-6991E8FE18A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EB82FC28-2E21-42CE-BE11-6991E8FE18A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EB82FC28-2E21-42CE-BE11-6991E8FE18A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EB82FC28-2E21-42CE-BE11-6991E8FE18A3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BB517EE5-0E10-4C39-A348-25678B3B639D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BB517EE5-0E10-4C39-A348-25678B3B639D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB517EE5-0E10-4C39-A348-25678B3B639D}.Release|Any CPU.ActiveCfg = Release|Any CPU

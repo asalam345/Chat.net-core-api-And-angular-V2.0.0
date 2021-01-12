@@ -17,9 +17,9 @@ namespace chat_server.Service
 	{
         private readonly string _connectionString;
         DataTable dataTable;
-        public MySqlCommands(IConfiguration configuration)
+        public MySqlCommands()
         {
-            _connectionString = configuration.GetConnectionString("ChatDatabase");
+            _connectionString = ConnectionStringManager.GetConnectionString();
         }
         public Result DefaultResult(string message)
         {

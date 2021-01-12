@@ -10,9 +10,4 @@ namespace Models
         public string Email { get; set; }
         public bool ForLogin { get; set; }
     }
-    public class SenderAndReceiver
-	{
-        public long SenderId { get; set; }
-        public long ReceiverId { get; set; }
-    }
 }

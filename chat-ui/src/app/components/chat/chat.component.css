@@ -49,6 +49,7 @@ body {
 }
 .people-list ul li {
   padding: 1px 5px;
+  cursor: pointer;
 }
 .people-list img {
   float: left;
@@ -238,7 +239,7 @@ ul li{
     margin-top: -5px;
 }
 .avatar{
-	width: 50px; height: 50px; border-radius: 50%;
+	width: 30px; height: 30px; border-radius: 50%;
 }
 .selected{
 color:#E38968!important;

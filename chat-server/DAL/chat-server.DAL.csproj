@@ -13,7 +13,6 @@
   <ItemGroup>
     <ProjectReference Include="..\chat-server.Service\chat-server.Service.csproj" />
     <ProjectReference Include="..\Model\chat-server.Entity.csproj" />
-    <ProjectReference Include="..\Repository\Repository.SqlServer.csproj" />
   </ItemGroup>
 
 </Project>

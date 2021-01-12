@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Models
 {
-	public class tblMessage
+	public class MessageVM
 	{
 		public long ChatId { get; set; }
 		public long SenderId { get; set; }

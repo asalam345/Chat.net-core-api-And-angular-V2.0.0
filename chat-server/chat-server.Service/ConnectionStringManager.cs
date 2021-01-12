@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Extensions.Configuration.Json;
 using System.IO;
 
-namespace DAL
+namespace chat_server.Service
 {
 	public static class ConnectionStringManager
 	{
