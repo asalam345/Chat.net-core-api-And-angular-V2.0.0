@@ -44,8 +44,9 @@ namespace chat_server.Service
                 return 0;
             }
         }
-        public async Task<bool> InsertOrUpdateOrDelete(string query)
+        public async Task<Result> InsertOrUpdateOrDelete(string query)
 		{
+            Result result = DefaultResult("");
             try
             {
                 using (SqlConnection sql = new SqlConnection(_connectionString))
@@ -56,14 +57,15 @@ namespace chat_server.Service
                         if (sql.State == ConnectionState.Closed)
                             await sql.OpenAsync();
 
-                        int result = cmd.ExecuteNonQuery();
-                        if (result > 0)
+                        int exResult = cmd.ExecuteNonQuery();
+                        if (exResult > 0)
                         {
-                            return true;
+                            result.IsSuccess = true;
+                            result.Message = exResult.ToString();
                         }
                         else
                         {
-                            return false;
+                            result.IsSuccess = false;
                         }
                     }
                 }
@@ -71,11 +73,12 @@ namespace chat_server.Service
             catch (Exception ex)
             {
                 //exceptionHandel("Connection", "GetData", ex.ToString());
-                return false;
+                result.IsSuccess = false;
             }
             finally
             {
             }
+            return result;
 		}
 		public async Task<DataTable> GetData(string query)
         {

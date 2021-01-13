@@ -51,18 +51,20 @@ namespace DAL
             Result result = DefaultResult("Successfully!");
             try
 			{
-                long chatId = await getMaxRow("ChatId", "tblMessage") + 1;
+                //long chatId = await getMaxRow("ChatId", "tblMessage") + 1;
                 DateTime dt = DateTime.Now;
                 string time = dt.ToShortTimeString();
-                string query = @"INSERT INTO tblMessage(ChatId, SenderId,ReceiverId,Message,Date,Time) 
-VALUES(" + chatId + "," + model.SenderId + "," + model.ReceiverId + ",'" + model.Message + "',GetDate(),'" 
+                string query = @"INSERT INTO tblMessage(ChatId, SenderId,ReceiverId,Message,Date,Time) output INSERTED.ChatId 
+VALUES((SELECT 1 + coalesce(max(ChatId), 0) FROM tblMessage)," + model.SenderId + "," + model.ReceiverId + ",'" + model.Message + "',GetDate(),'" 
 + time + "')";
-                result.IsSuccess = await InsertOrUpdateOrDelete(query);
-                //query = "SELECT LAST(ChatId) FROM tblMessage";
-                string[] message = new string[2];
-                message[0] = chatId.ToString();
-                message[1] = time;
-                result.Data = message;
+                result = await InsertOrUpdateOrDelete(query);
+                if (result.IsSuccess)
+                {
+                    string[] message = new string[2];
+                    message[0] = result.Message;
+                    message[1] = time;
+                    result.Data = message;
+                }
             }
 			catch (Exception ex)
 			{
@@ -79,7 +81,7 @@ VALUES(" + chatId + "," + model.SenderId + "," + model.ReceiverId + ",'" + model
             {
                 DateTime dt = DateTime.Now;
                 string query = "UPDATE tblMessage SET IsDeleteFromReceiver = 1 WHERE ChatId=" + model.ChatId;
-                result.IsSuccess = await InsertOrUpdateOrDelete(query);
+                result = await InsertOrUpdateOrDelete(query);
             }
             catch (Exception ex)
             {
@@ -97,7 +99,7 @@ VALUES(" + chatId + "," + model.SenderId + "," + model.ReceiverId + ",'" + model
             {
                 DateTime dt = DateTime.Now;
                 string query = "Delete FROM tblMessage WHERE ChatId=" + id;
-                result.IsSuccess = await InsertOrUpdateOrDelete(query);
+                result = await InsertOrUpdateOrDelete(query);
             }
             catch (Exception ex)
             {

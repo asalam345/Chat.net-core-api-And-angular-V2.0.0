@@ -24,7 +24,7 @@ namespace DAL
 			try
 			{
 				string query = "Delete FROM tblUser WHERE UserId = " + id;
-				result.Message = await InsertOrUpdateOrDelete(query)?"Delete Successfullly" : "User Not Found!";
+				result.Message = (await InsertOrUpdateOrDelete(query)).IsSuccess ? "Delete Successfullly" : "User Not Found!";
 				result.Data = null;
 			}
 			catch (Exception ex)
@@ -57,10 +57,11 @@ namespace DAL
 						result.IsSuccess = false;
 						return await Task.FromResult<Result>(result);
 					}
-					long userId = await getMaxRow("UserId", "tblUser") + 1;				
+					//long userId = await getMaxRow("UserId", "tblUser") + 1;				
 
-					string query = "INSERT INTO tblUser(userId, email,firstname,lastName) VALUES(" + userId + ",'" + _model.Email
-					+ "','" + _model.FirstName + "', '" + _model.LastName + "')";
+					string query = @"INSERT INTO tblUser(UserId, email,firstname,lastName) VALUES
+								((SELECT 1 + coalesce(max(UserId), 0) FROM tblUser),'" 
+					+ _model.Email + "','" + _model.FirstName + "', '" + _model.LastName + "')";
 					await InsertOrUpdateOrDelete(query);
 			}
 			catch (Exception ex)

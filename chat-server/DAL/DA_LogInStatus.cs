@@ -12,9 +12,6 @@ namespace DAL
 {
 	public class DA_LogInStatus : MySqlCommands, IGenericService<tblLogedinStatus>
     {
-        //public DA_LogInStatus(IConfiguration configuration) : base(configuration)
-        //{
-        //}
         public DA_LogInStatus() 
         {
         }
@@ -30,12 +27,12 @@ namespace DAL
             {
                 if (model.IsLoged)
                 {
-                    long loginStatusId = await getMaxRow("LoginStatusId", "LogInStatus") + 1;
+                    //long loginStatusId = await getMaxRow("LoginStatusId", "LogInStatus") + 1;
                     DateTime dt = DateTime.Now;
-                    string query = "INSERT INTO LogInStatus(LoginStatusId,IpAddress,UserId,IsLoged,Date,Time) VALUES("
-                        + loginStatusId + ",'" + model.IpAddress + "','" + model.UserId + "', true,GetDate(),'"
+                    string query = @"INSERT INTO LogInStatus(LoginStatusId,IpAddress,UserId,IsLoged,Date,Time) VALUES
+((SELECT 1 + coalesce(max(LoginStatusId), 0) FROM LogInStatus),'" + model.IpAddress + "','" + model.UserId + "', true,GetDate(),'"
                         + dt.ToShortTimeString() + "')";
-                    result.IsSuccess = await InsertOrUpdateOrDelete(query);
+                    result = await InsertOrUpdateOrDelete(query);
                 }
                 else
                 {
@@ -66,7 +63,7 @@ namespace DAL
                 string query = "UPDATE LogInStatus SET IsLoged = false,Date=GetDate(),Time = '"
                     + dt.ToShortTimeString() + "' WHERE IpAddress='" + model.IpAddress 
                     + "' AND UserId = " + model.UserId;
-                result.IsSuccess = await InsertOrUpdateOrDelete(query);
+                result = await InsertOrUpdateOrDelete(query);
             }
             catch (Exception ex)
             {

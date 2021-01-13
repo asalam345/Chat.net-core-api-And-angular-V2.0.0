@@ -12,7 +12,7 @@ namespace chat_server.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
-	public class GenericController<T> : Controller where T:class
+	public class GenericController<T> : ControllerBase where T:class
 	{
 		private IGenericService<T> _genericService;
 		public GenericController(IGenericService<T> genericService)
