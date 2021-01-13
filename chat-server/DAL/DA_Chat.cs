@@ -79,8 +79,16 @@ VALUES((SELECT 1 + coalesce(max(ChatId), 0) FROM tblMessage)," + model.SenderId 
             Result result = DefaultResult("Successfully!");
             try
             {
-                DateTime dt = DateTime.Now;
-                string query = "UPDATE tblMessage SET IsDeleteFromReceiver = 1 WHERE ChatId=" + model.ChatId;
+                string query = "";
+                if (model.IsDeleteFromReceiver)
+				{
+                    query = "UPDATE tblMessage SET IsDeleteFromReceiver = 1 WHERE ChatId=" + model.ChatId;
+                }
+				else
+				{
+                    query = "UPDATE tblMessage SET IsDeleteFromSender = 1 WHERE ChatId=" + model.ChatId;
+                }
+                
                 result = await InsertOrUpdateOrDelete(query);
             }
             catch (Exception ex)

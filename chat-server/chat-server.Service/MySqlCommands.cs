@@ -57,11 +57,19 @@ namespace chat_server.Service
                         if (sql.State == ConnectionState.Closed)
                             await sql.OpenAsync();
 
-                        int exResult = cmd.ExecuteNonQuery();
+                        long exResult = 0;
+                        if (query.Contains("output"))
+                        {
+                            exResult = (long)cmd.ExecuteScalar();
+                            result.Message = exResult.ToString();
+                        }
+                        else
+                        {
+                            exResult = cmd.ExecuteNonQuery();
+                        }
                         if (exResult > 0)
                         {
                             result.IsSuccess = true;
-                            result.Message = exResult.ToString();
                         }
                         else
                         {

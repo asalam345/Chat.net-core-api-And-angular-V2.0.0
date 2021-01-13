@@ -13,5 +13,6 @@ namespace Models
 		public DateTime Date { get; set; }
 		public string Time{ get; set; }
 		public bool IsDeleteFromReceiver { get; set; }
+		public bool IsDeleteFromSender { get; set; }
 	}
 }

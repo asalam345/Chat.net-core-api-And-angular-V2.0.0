@@ -1,6 +1,6 @@
 import { AfterViewChecked, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { chatMesage } from 'src/app/data/chatMesage';
+import { chatMesage } from 'src/app/data/ChatMessage';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { ChatService } from 'src/app/services/chat.service';
 import { SignalrService } from '../../services/signalr.service';
@@ -80,10 +80,12 @@ getMessage():void{
         SenderId: m.senderId,
         ReceiverId: m.receiverId,
         ChatId: m.chatId,
-        IsDeleteFromReceiver: m.isDeleteFromReceiver
+        IsDeleteFromReceiver: m.isDeleteFromReceiver,
+        IsDeleteFromSender: m.isDeleteFromSender
       }
     });
     this.allMessages = this.signalRService.messages;
+    console.log(this.signalRService.messages);
   });
 }
 sendMessage(): void {
@@ -99,8 +101,9 @@ this.chatService.delete(id).subscribe(s =>{
    this.getMessage();
 });
 }
-public deleteOneSide(id:number){
-  this.chatService.deleteOneSide(id).subscribe(s =>{
+public deleteOneSide(id:number, sender:number){
+  const isDeleteFromReceiver = sender === this.receiverId ? true : false;
+  this.chatService.deleteOneSide(id, isDeleteFromReceiver).subscribe(s =>{
     this.signalRService.messages = this.signalRService.messages.filter(item => item.ChatId !== id);
     this.getMessage();
  });

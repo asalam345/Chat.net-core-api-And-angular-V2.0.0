@@ -6,5 +6,6 @@ export interface chatMesage {
   SenderId: number;
   ReceiverId:number;
   ChatId: number;
-  //IsDeleteFromReceiver:boolean;
+  IsDeleteFromReceiver:boolean;
+  IsDeleteFromSender:boolean;
 }

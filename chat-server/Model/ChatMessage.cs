@@ -11,5 +11,7 @@ namespace Models
         public long ReceiverId { get; set; }
         public long SenderId { get; set; }
         public long ChatId { get; set; }
+        public bool IsDeleteFromReceiver { get; set; }
+        public bool IsDeleteFromSender { get; set; }
     }
 }

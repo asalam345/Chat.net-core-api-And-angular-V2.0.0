@@ -18,13 +18,16 @@ namespace chat_server
         {
 			try
 			{
-                MessageVM msg = new MessageVM();
-                msg.Message = chat.Text;
-                msg.ReceiverId = chat.ReceiverId;
-                msg.SenderId = chat.SenderId;
-                Result result =  await _genericService.Entry(msg);
-                
-                await Clients.All.MessageReceivedFromHub(chat);
+				MessageVM msg = new MessageVM();
+				msg.Message = chat.Text;
+				msg.ReceiverId = chat.ReceiverId;
+				msg.SenderId = chat.SenderId;
+				Result result =  await _genericService.Entry(msg);
+                if (result.IsSuccess) {
+                    chat.ChatId = Convert.ToInt64(((string[])result.Data)[0]);
+                    chat.Time = ((string[])result.Data)[1];
+                    await Clients.All.MessageReceivedFromHub(chat);
+                }
             }
 			catch (Exception ex)
 			{
@@ -38,9 +41,5 @@ namespace chat_server
         }
 	}
 
-    public interface IChatHub
-    {
-        Task MessageReceivedFromHub(ChatMessage message);
-        Task NewUserConnected(string message);
-    }
+   
 }

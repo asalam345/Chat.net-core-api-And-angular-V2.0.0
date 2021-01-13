@@ -24,9 +24,10 @@ export class ChatService {
     const reqHeader = new HttpHeaders({ 'Content-Type': 'application/json', 'No-Auth': 'True' });
     return this.http.delete<boolean>(Common.baseUrl + 'api/Chat/' + id, { headers: reqHeader });
   }
-  public deleteOneSide(id:number){
+  public deleteOneSide(id:number, isDeleteFromReceiver:boolean){
     const data = {
-      ChatId : id
+      ChatId : id,
+      IsDeleteFromReceiver: isDeleteFromReceiver
     }
     const body = JSON.stringify(data);
     const reqHeader = new HttpHeaders({ 'Content-Type': 'application/json', 'No-Auth': 'True' });

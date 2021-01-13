@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
 import { from } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { chatMesage } from '../data/chatMesage';
+import { chatMesage } from '../data/ChatMessage';
 import { MessagePackHubProtocol } from '@microsoft/signalr-protocol-msgpack'
 import { Common } from './common/common';
 @Injectable({
@@ -68,7 +68,9 @@ export class SignalrService {
       SenderId: sender,
       ReceiverId: receiver,
       Time: '',
-      ChatId: 0
+      ChatId: 0,
+      IsDeleteFromReceiver:false,
+      IsDeleteFromSender:false
     };
   }
 
@@ -82,11 +84,12 @@ export class SignalrService {
 
   private addListeners() {
     this.hubConnection.on("messageReceivedFromApi", (data: chatMesage) => {
-      console.log("message received from API Controller")
+      console.log("message received from API Controller");
       this.messages.push(data);
     })
     this.hubConnection.on("messageReceivedFromHub", (data: chatMesage) => {
-      console.log("message received from Hub")
+      console.log("message received from Hub");
+      console.log(data);
       this.messages.push(data);
     })
     this.hubConnection.on("newUserConnected", _ => {
