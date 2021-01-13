@@ -90,7 +90,7 @@ getMessage():void{
 }
 sendMessage(): void {
   if(this.text.length == 0)return;
-  this.signalRService.sendMessageToHub(this.text,this.senderId, this.receiverId).subscribe({
+  this.signalRService.sendMessageToHub(0,this.text,this.senderId, this.receiverId).subscribe({
   next: _ => {this.text = ''; this.getMessage();},
 error: (err) => console.error(err)
   });
@@ -98,7 +98,10 @@ error: (err) => console.error(err)
 deleteMessage(id:number){
 this.chatService.delete(id).subscribe(s =>{
    this.signalRService.messages = this.signalRService.messages.filter(item => item.ChatId !== id);
-   this.getMessage();
+   this.signalRService.sendMessageToHub(id,this.text,this.senderId, this.receiverId).subscribe({
+      next: _ => {this.text = ''; this.getMessage();},
+      error: (err) => console.error(err)
+    });
 });
 }
 public deleteOneSide(id:number, sender:number){

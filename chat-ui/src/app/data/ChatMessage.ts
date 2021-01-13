@@ -8,4 +8,5 @@ export interface chatMesage {
   ChatId: number;
   IsDeleteFromReceiver:boolean;
   IsDeleteFromSender:boolean;
+  IsChnaged:boolean;
 }

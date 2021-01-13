@@ -18,14 +18,23 @@ namespace chat_server
         {
 			try
 			{
-				MessageVM msg = new MessageVM();
-				msg.Message = chat.Text;
-				msg.ReceiverId = chat.ReceiverId;
-				msg.SenderId = chat.SenderId;
-				Result result =  await _genericService.Entry(msg);
-                if (result.IsSuccess) {
-                    chat.ChatId = Convert.ToInt64(((string[])result.Data)[0]);
-                    chat.Time = ((string[])result.Data)[1];
+                if (chat.ChatId == 0)
+                {
+                    MessageVM msg = new MessageVM();
+                    msg.Message = chat.Text;
+                    msg.ReceiverId = chat.ReceiverId;
+                    msg.SenderId = chat.SenderId;
+                    Result result = await _genericService.Entry(msg);
+                    if (result.IsSuccess)
+                    {
+                        chat.ChatId = Convert.ToInt64(((string[])result.Data)[0]);
+                        chat.Time = ((string[])result.Data)[1];
+                        await Clients.All.MessageReceivedFromHub(chat);
+                    }
+                }
+				else
+				{
+                    chat.IsChnaged = true;
                     await Clients.All.MessageReceivedFromHub(chat);
                 }
             }

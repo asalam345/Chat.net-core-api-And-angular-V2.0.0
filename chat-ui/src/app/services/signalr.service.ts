@@ -39,13 +39,13 @@ export class SignalrService {
     return this.http.post(Common.baseUrl + 'api/Chat', body, { headers: reqHeader });
 
   }
-  public sendMessageToApi(message: string, sender:number, receiver:number) {
-    return this.http.post(this.apiUrl, this.buildChatMessage(message,sender,receiver))
+  public sendMessageToApi(chatId:number,message: string, sender:number, receiver:number) {
+    return this.http.post(this.apiUrl, this.buildChatMessage(chatId,message,sender,receiver))
       .pipe(tap(_ => console.log("message sucessfully sent to api controller")));
   }
 
-  public sendMessageToHub(message: string, sender:number, receiver:number) {
-    var promise = this.hubConnection.invoke("BroadcastAsync", this.buildChatMessage(message,sender,receiver))
+  public sendMessageToHub(chatId:number, message: string, sender:number, receiver:number) {
+    var promise = this.hubConnection.invoke("BroadcastAsync", this.buildChatMessage(chatId,message,sender,receiver))
       .then(() => { console.log('message sent successfully to hub'); })
       .catch((err) => console.log('error while sending a message to hub: ' + err));
     return from(promise);
@@ -59,7 +59,7 @@ export class SignalrService {
       .build();
   }
 
-  private buildChatMessage(message: string, sender:number, receiver:number): chatMesage {
+  private buildChatMessage(chatId:number, message: string, sender:number, receiver:number): chatMesage {
     //;
     return {
       ConnectionId: this.hubConnection.connectionId,
@@ -68,9 +68,10 @@ export class SignalrService {
       SenderId: sender,
       ReceiverId: receiver,
       Time: '',
-      ChatId: 0,
+      ChatId: chatId,
       IsDeleteFromReceiver:false,
-      IsDeleteFromSender:false
+      IsDeleteFromSender:false,
+      IsChnaged:false
     };
   }
 
@@ -89,8 +90,13 @@ export class SignalrService {
     })
     this.hubConnection.on("messageReceivedFromHub", (data: chatMesage) => {
       console.log("message received from Hub");
-      console.log(data);
+      if(!data.IsChnaged){
       this.messages.push(data);
+      console.log(this.messages);
+      }else{
+        this.messages = this.messages.filter(f => f.ChatId != data.ChatId);
+        console.log(this.messages);
+      }
     })
     this.hubConnection.on("newUserConnected", _ => {
       console.log("new user connected")
